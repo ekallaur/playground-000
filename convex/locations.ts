@@ -1,9 +1,11 @@
 import { mutationGeneric, queryGeneric } from "convex/server";
-import { v, type Id } from "convex/values";
+import { v, type GenericId } from "convex/values";
 import { locationTypeValidator } from "./validators";
 
 const mutation = mutationGeneric;
 const query = queryGeneric;
+
+type LocationId = GenericId<"locations">;
 
 const DEFAULT_LIMIT = 50;
 const MAX_LIMIT = 200;
@@ -176,9 +178,9 @@ export const removeLocation = mutation({
       return;
     }
 
-    const toVisit: Array<Id<"locations">> = [args.id];
-    const toDelete: Array<Id<"locations">> = [];
-    const seen = new Set<Id<"locations">>();
+    const toVisit: Array<LocationId> = [args.id];
+    const toDelete: Array<LocationId> = [];
+    const seen = new Set<LocationId>();
 
     while (toVisit.length > 0) {
       const currentId = toVisit.pop();
