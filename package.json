@@ -1,0 +1,27 @@
+{
+  "name": "workspace",
+  "version": "1.0.0",
+  "description": "Convex locations management backend.",
+  "private": true,
+  "scripts": {
+    "convex:dev": "npx convex dev",
+    "convex:codegen": "npx convex codegen"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ekallaur/playground-000.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ekallaur/playground-000/issues"
+  },
+  "homepage": "https://github.com/ekallaur/playground-000#readme",
+  "dependencies": {
+    "convex": "^1.31.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
