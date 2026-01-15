@@ -1,5 +1,5 @@
 import { mutationGeneric, queryGeneric } from "convex/server";
-import { v } from "convex/values";
+import { v, type Id } from "convex/values";
 import { locationTypeValidator } from "./validators";
 
 const mutation = mutationGeneric;
@@ -176,9 +176,9 @@ export const removeLocation = mutation({
       return;
     }
 
-    const toVisit = [args.id];
-    const toDelete: Array<string> = [];
-    const seen = new Set<string>();
+    const toVisit: Array<Id<"locations">> = [args.id];
+    const toDelete: Array<Id<"locations">> = [];
+    const seen = new Set<Id<"locations">>();
 
     while (toVisit.length > 0) {
       const currentId = toVisit.pop();
@@ -220,9 +220,8 @@ export const listLocations = query({
     if (args.type !== undefined && args.parentId !== undefined) {
       return ctx.db
         .query("locations")
-        .withIndex("by_type_parent", (q) =>
-          q.eq("type", args.type).eq("parentId", args.parentId),
-        )
+        .withIndex("by_type_parent", (q) => q.eq("type", args.type))
+        .filter((q) => q.eq(q.field("parentId"), args.parentId))
         .take(limit);
     }
 
