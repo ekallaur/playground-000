@@ -28,13 +28,20 @@ function normalizeName(name: string) {
   return trimmed;
 }
 
-function normalizeCode(code?: string) {
-  if (code === undefined) {
+function normalizeCodeField(
+  label: string,
+  value?: string,
+  expectedLength?: number,
+) {
+  if (value === undefined) {
     return undefined;
   }
-  const trimmed = code.trim().toUpperCase();
+  const trimmed = value.trim().toUpperCase();
   if (!trimmed) {
-    throw new Error("Code cannot be empty.");
+    throw new Error(`${label} cannot be empty.`);
+  }
+  if (expectedLength !== undefined && trimmed.length !== expectedLength) {
+    throw new Error(`${label} must be ${expectedLength} characters.`);
   }
   return trimmed;
 }
@@ -70,7 +77,10 @@ export const createLocation = mutation({
     name: v.string(),
     type: locationTypeValidator,
     parentId: v.optional(v.id("locations")),
-    code: v.optional(v.string()),
+    iso2: v.optional(v.string()),
+    iso3: v.optional(v.string()),
+    iata: v.optional(v.string()),
+    icao: v.optional(v.string()),
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
     timezone: v.optional(v.string()),
@@ -78,7 +88,10 @@ export const createLocation = mutation({
   },
   handler: async (ctx, args) => {
     const name = normalizeName(args.name);
-    const code = normalizeCode(args.code);
+    const iso2 = normalizeCodeField("ISO2", args.iso2, 2);
+    const iso3 = normalizeCodeField("ISO3", args.iso3, 3);
+    const iata = normalizeCodeField("IATA", args.iata, 3);
+    const icao = normalizeCodeField("ICAO", args.icao, 4);
     const timezone = normalizeTimezone(args.timezone);
     validateCoordinates(args.latitude, args.longitude);
 
@@ -94,7 +107,10 @@ export const createLocation = mutation({
       name,
       type: args.type,
       parentId: args.parentId ?? null,
-      code,
+      iso2,
+      iso3,
+      iata,
+      icao,
       latitude: args.latitude,
       longitude: args.longitude,
       timezone,
@@ -111,7 +127,10 @@ export const updateLocation = mutation({
     name: v.optional(v.string()),
     type: v.optional(locationTypeValidator),
     parentId: v.optional(v.union(v.id("locations"), v.null())),
-    code: v.optional(v.string()),
+    iso2: v.optional(v.string()),
+    iso3: v.optional(v.string()),
+    iata: v.optional(v.string()),
+    icao: v.optional(v.string()),
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
     timezone: v.optional(v.string()),
@@ -138,8 +157,17 @@ export const updateLocation = mutation({
       }
       patch.parentId = args.parentId;
     }
-    if (args.code !== undefined) {
-      patch.code = normalizeCode(args.code);
+    if (args.iso2 !== undefined) {
+      patch.iso2 = normalizeCodeField("ISO2", args.iso2, 2);
+    }
+    if (args.iso3 !== undefined) {
+      patch.iso3 = normalizeCodeField("ISO3", args.iso3, 3);
+    }
+    if (args.iata !== undefined) {
+      patch.iata = normalizeCodeField("IATA", args.iata, 3);
+    }
+    if (args.icao !== undefined) {
+      patch.icao = normalizeCodeField("ICAO", args.icao, 4);
     }
     if (args.latitude !== undefined || args.longitude !== undefined) {
       validateCoordinates(args.latitude, args.longitude);

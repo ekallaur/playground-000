@@ -10,7 +10,10 @@ future map rendering.
   - `name`: display name
   - `type`: `country | region | city | airport | landmark | other`
   - `parentId`: parent location id or `null` for root nodes
-  - `code`: optional ISO/IATA code
+  - `iso2`: optional ISO-3166-1 alpha-2 code
+  - `iso3`: optional ISO-3166-1 alpha-3 code
+  - `iata`: optional IATA airport code
+  - `icao`: optional ICAO airport code
   - `latitude`, `longitude`: optional coordinates
   - `timezone`: optional timezone identifier
   - `description`: optional freeform text
